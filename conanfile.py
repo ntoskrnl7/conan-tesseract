@@ -34,6 +34,8 @@ class TesseractConan(ConanFile):
                     os.path.join(self.source_subfolder, "CMakeLists.txt"))
 
     def config_options(self):
+        if self.settings.os == "Windows":
+            self.options.remove("fPIC")
         if self.options.with_training:
             raise Exception("Build with training is not yet supported")
 
