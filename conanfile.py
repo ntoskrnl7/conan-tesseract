@@ -66,9 +66,8 @@ class TesseractConan(ConanFile):
         # Fix pc file: cmake does not fill libs.private
         if self.settings.os != 'Windows':
             libs_private = []
-            for dep in ['leptonica']:
-                libs_private.extend(['-L'+path for path in self.deps_cpp_info[dep].lib_paths])
-                libs_private.extend(['-l'+lib for lib in self.deps_cpp_info[dep].libs])
+            libs_private.extend(['-L'+path for path in self.deps_cpp_info['leptonica'].lib_paths])
+            libs_private.extend(['-l'+lib for lib in self.deps_cpp_info['leptonica'].libs])
             path = os.path.join(self.package_folder, 'lib', 'pkgconfig', 'tesseract.pc')
             tools.replace_in_file(path,
                                  'Libs.private:',
