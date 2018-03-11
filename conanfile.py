@@ -45,7 +45,7 @@ class TesseractConan(ConanFile):
             installer = tools.SystemPackageTool()
             installer.install('pkg-config')
 
-    def build_cmake(self):
+    def build(self):
         cmake = CMake(self)
         if self.settings.os != "Windows":
             cmake.definitions["CMAKE_POSITION_INDEPENDENT_CODE"] = self.options.fPIC
@@ -111,9 +111,6 @@ class TesseractConan(ConanFile):
         else:
             from_str = self.package_folder
         tools.replace_in_file(path, from_str, '${PACKAGE_PREFIX}')
-
-    def build(self):
-        self.build_cmake()
 
     def package(self):
         self.copy("LICENSE", src=self.source_subfolder, dst="licenses", ignore_case=True, keep_path=False)
