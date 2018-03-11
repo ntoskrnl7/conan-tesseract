@@ -31,6 +31,13 @@ class TesseractConan(ConanFile):
         shutil.copy("CMakeLists.txt",
                     os.path.join(self.source_subfolder, "CMakeLists.txt"))
 
+
+    def system_requirements(self):
+        """ Temporary requirement until pkgconfig_installer is introduced """
+        if tools.os_info.is_linux and tools.os_info.with_apt:
+            installer = tools.SystemPackageTool()
+            installer.install('pkg-config')
+
     def build_cmake(self):
         cmake = CMake(self)
         cmake.definitions["CMAKE_POSITION_INDEPENDENT_CODE"] = self.options.fPIC
