@@ -128,3 +128,6 @@ class TesseractConan(ConanFile):
         self.cpp_info.libs = tools.collect_libs(self)
         if self.settings.os == "Linux":
             self.cpp_info.libs.extend(["pthread"])
+        if self.settings.compiler == "Visual Studio":
+            if not self.options.shared:
+                self.cpp_info.libs.append('ws2_32')
