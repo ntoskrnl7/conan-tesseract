@@ -58,17 +58,18 @@ class TesseractConan(ConanFile):
         # which use static dependencies like jpeg, png etc provided by lept.pc
         if not self.options['leptonica'].shared:
             tools.replace_in_file(os.path.join(self.source_subfolder, "CMakeListsOriginal.txt"),
-                    "target_link_libraries       (libtesseract ${Leptonica_LIBRARIES})",
-                    "target_link_libraries       (libtesseract ${Leptonica_STATIC_LIBRARIES})")
+                                  "target_link_libraries       (libtesseract ${Leptonica_LIBRARIES})",
+                                  "target_link_libraries       (libtesseract ${Leptonica_STATIC_LIBRARIES})")
 
         if self.version == "3.05.01":
             # upstream bug: output name is not substituted for tesseract.pc
             # fixed in master but still an issue for stable
-            tools.replace_in_file(os.path.join(self.source_subfolder, "CMakeListsOriginal.txt"),
-                    "set_target_properties           (libtesseract PROPERTIES DEBUG_OUTPUT_NAME tesseract${VERSION_MAJOR}${VERSION_MINOR}d)",
-                    "set_target_properties           (libtesseract PROPERTIES DEBUG_OUTPUT_NAME tesseract${VERSION_MAJOR}${VERSION_MINOR}d)\n"
-                    "else()\n"
-                    "set_target_properties           (libtesseract PROPERTIES OUTPUT_NAME tesseract)\n")
+            tools.replace_in_file(
+                os.path.join(self.source_subfolder, "CMakeListsOriginal.txt"),
+                "set_target_properties           (libtesseract PROPERTIES DEBUG_OUTPUT_NAME tesseract${VERSION_MAJOR}${VERSION_MINOR}d)",
+                "set_target_properties           (libtesseract PROPERTIES DEBUG_OUTPUT_NAME tesseract${VERSION_MAJOR}${VERSION_MINOR}d)\n"
+                "else()\n"
+                "set_target_properties           (libtesseract PROPERTIES OUTPUT_NAME tesseract)\n")
 
         with tools.environment_append({'PKG_CONFIG_PATH': self.build_folder}):
             cmake.configure(source_folder=self.source_subfolder)
@@ -82,8 +83,8 @@ class TesseractConan(ConanFile):
             libs_private.extend(['-l'+lib for lib in self.deps_cpp_info['leptonica'].libs])
             path = os.path.join(self.package_folder, 'lib', 'pkgconfig', 'tesseract.pc')
             tools.replace_in_file(path,
-                                 'Libs.private:',
-                                 'Libs.private: ' + ' '.join(libs_private))
+                                  'Libs.private:',
+                                  'Libs.private: ' + ' '.join(libs_private))
 
 
     def build(self):
