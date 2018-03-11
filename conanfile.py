@@ -45,7 +45,8 @@ class TesseractConan(ConanFile):
 
     def build_cmake(self):
         cmake = CMake(self)
-        cmake.definitions["CMAKE_POSITION_INDEPENDENT_CODE"] = self.options.fPIC
+        if self.settings.os != "Windows":
+            cmake.definitions["CMAKE_POSITION_INDEPENDENT_CODE"] = self.options.fPIC
         cmake.definitions['BUILD_TRAINING_TOOLS'] = False
         cmake.definitions["BUILD_SHARED_LIBS"] = self.options.shared
         cmake.definitions["STATIC"] = not self.options.shared
@@ -71,13 +72,17 @@ class TesseractConan(ConanFile):
                 "else()\n"
                 "set_target_properties           (libtesseract PROPERTIES OUTPUT_NAME tesseract)\n")
 
+        if self.settings.compiler == "Visual Studio":
+            # VS build uses cmake to locate leptonica
+            cmake.definitions['Leptonica_DIR'] = self.deps_cpp_info['leptonica'].rootpath
+
         with tools.environment_append({'PKG_CONFIG_PATH': self.build_folder}):
             cmake.configure(source_folder=self.source_subfolder)
             cmake.build()
             cmake.install()
 
         # Fix pc file: cmake does not fill libs.private
-        if self.settings.os != 'Windows':
+        if self.settings.compiler != "Visual Studio":
             libs_private = []
             libs_private.extend(['-L'+path for path in self.deps_cpp_info['leptonica'].lib_paths])
             libs_private.extend(['-l'+lib for lib in self.deps_cpp_info['leptonica'].libs])
@@ -88,10 +93,7 @@ class TesseractConan(ConanFile):
 
 
     def build(self):
-        if self.settings.compiler == "Visual Studio":
-            raise Exception("Windows build not supported")
-        else:
-            self.build_cmake()
+        self.build_cmake()
 
     def package(self):
         self.copy("LICENSE", src=self.source_subfolder, dst="licenses", ignore_case=True, keep_path=False)
