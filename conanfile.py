@@ -57,9 +57,14 @@ class TesseractConan(ConanFile):
         shutil.copy(os.path.join(self.deps_cpp_info['leptonica'].rootpath, 'lib', 'pkgconfig', 'lept.pc'), 'lept.pc')
         tools.replace_prefix_in_pc_file("lept.pc", self.deps_cpp_info['leptonica'].rootpath)
 
-        # if static leptonica used, tesseract must use Leptonica_STATIC_LIBRARIES
+        # VS build uses cmake to locate leptonica
+        use_pkg_config = self.settings.compiler != "Visual Studio"
+        # use cmake-based configure even for unix
+        use_pkg_config = False
+
+        # if static leptonica used with pkg-config, tesseract must use Leptonica_STATIC_LIBRARIES
         # which use static dependencies like jpeg, png etc provided by lept.pc
-        if not self.options['leptonica'].shared:
+        if not self.options['leptonica'].shared and use_pkg_config:
             tools.replace_in_file(os.path.join(self.source_subfolder, "CMakeListsOriginal.txt"),
                                   "target_link_libraries       (libtesseract ${Leptonica_LIBRARIES})",
                                   "target_link_libraries       (libtesseract ${Leptonica_STATIC_LIBRARIES})")
@@ -74,11 +79,10 @@ class TesseractConan(ConanFile):
                 "else()\n"
                 "set_target_properties           (libtesseract PROPERTIES OUTPUT_NAME tesseract)\n")
 
-        if self.settings.compiler == "Visual Studio":
-            # VS build uses cmake to locate leptonica
+        if not use_pkg_config:
             cmake.definitions['Leptonica_DIR'] = self.deps_cpp_info['leptonica'].rootpath
 
-        with tools.environment_append({'PKG_CONFIG_PATH': self.build_folder}):
+        with tools.environment_append({'PKG_CONFIG_PATH': self.build_folder}) if use_pkg_config else tools.no_op():
             cmake.configure(source_folder=self.source_subfolder)
             cmake.build()
             cmake.install()
