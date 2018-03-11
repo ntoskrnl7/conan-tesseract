@@ -17,8 +17,10 @@ class TesseractConan(ConanFile):
     exports_sources = ["CMakeLists.txt"]
     generators = "cmake"
     settings = "os", "arch", "compiler", "build_type"
-    options = {"shared": [True, False], "fPIC": [True, False]}
-    default_options = "shared=False", "fPIC=True"
+    options = {"shared": [True, False],
+               "fPIC": [True, False],
+               "with_training": [True, False]}
+    default_options = "shared=False", "fPIC=True", "with_training=False"
     source_subfolder = "source_subfolder"
 
     requires = "leptonica/1.75.1@bincrafters/stable"
@@ -31,6 +33,9 @@ class TesseractConan(ConanFile):
         shutil.copy("CMakeLists.txt",
                     os.path.join(self.source_subfolder, "CMakeLists.txt"))
 
+    def config_options(self):
+        if self.options.with_training:
+            raise Exception("Build with training is not yet supported")
 
     def system_requirements(self):
         """ Temporary requirement until pkgconfig_installer is introduced """
