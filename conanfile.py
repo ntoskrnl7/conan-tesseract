@@ -37,7 +37,8 @@ class TesseractConan(ConanFile):
         if self.settings.os == "Windows":
             self.options.remove("fPIC")
         if self.options.with_training:
-            raise Exception("Build with training is not yet supported")
+            # do not enforce failure and allow user to build with system cairo, pango, fontconfig
+            self.output.warn("*** Build with training is not yet supported, continue on your own")
 
     def system_requirements(self):
         """ Temporary requirement until pkgconfig_installer is introduced """
