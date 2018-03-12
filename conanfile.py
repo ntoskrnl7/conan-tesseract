@@ -103,9 +103,9 @@ class TesseractConan(ConanFile):
         # Fix cmake config file with absolute path
         path = os.path.join(self.package_folder, 'cmake', 'TesseractConfig.cmake')
         tools.replace_in_file(path,
-                "# Provide the include directories to the caller",
-                'get_filename_component(PACKAGE_PREFIX "${CMAKE_CURRENT_LIST_FILE}" PATH)\n'
-                'get_filename_component(PACKAGE_PREFIX "${PACKAGE_PREFIX}" PATH)')
+                              "# Provide the include directories to the caller",
+                              'get_filename_component(PACKAGE_PREFIX "${CMAKE_CURRENT_LIST_FILE}" PATH)\n'
+                              'get_filename_component(PACKAGE_PREFIX "${PACKAGE_PREFIX}" PATH)')
         if self.settings.os == 'Windows':
             from_str = self.package_folder.replace('\\', '/')
         else:
