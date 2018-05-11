@@ -48,8 +48,6 @@ class TesseractConan(ConanFile):
 
     def build(self):
         cmake = CMake(self)
-        if self.settings.os != "Windows":
-            cmake.definitions["CMAKE_POSITION_INDEPENDENT_CODE"] = self.options.fPIC
         cmake.definitions['BUILD_TRAINING_TOOLS'] = False
         cmake.definitions["BUILD_SHARED_LIBS"] = self.options.shared
         cmake.definitions["STATIC"] = not self.options.shared
