@@ -23,7 +23,7 @@ class TesseractConan(ConanFile):
     default_options = "shared=False", "fPIC=True", "with_training=False"
     source_subfolder = "source_subfolder"
 
-    requires = "leptonica/1.75.1@bincrafters/stable"
+    requires = "leptonica/1.76.0@bincrafters/stable"
 
     def source(self):
         tools.get("https://github.com/tesseract-ocr/tesseract/archive/%s.tar.gz" % self.version)
