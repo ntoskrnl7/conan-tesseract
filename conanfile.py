@@ -49,7 +49,7 @@ class TesseractConan(ConanFile):
 
     def build(self):
         cmake = CMake(self)
-        cmake.definitions['BUILD_TRAINING_TOOLS'] = False
+        cmake.definitions['BUILD_TRAINING_TOOLS'] = self.options.with_training
         cmake.definitions["BUILD_SHARED_LIBS"] = self.options.shared
         cmake.definitions["STATIC"] = not self.options.shared
 
