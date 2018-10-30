@@ -4,12 +4,13 @@ environment:
     PYTHON: "C:\\Python37"
 
     matrix:
-        - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-          CONAN_VISUAL_VERSIONS: 12
-          CONAN_BUILD_TYPES: Release
-        - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-          CONAN_VISUAL_VERSIONS: 12
-          CONAN_BUILD_TYPES: Debug
+        # does not work for Visual Studio 2013 (dev12)
+        #- APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+        #  CONAN_VISUAL_VERSIONS: 12
+        #  CONAN_BUILD_TYPES: Release
+        #- APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+        #  CONAN_VISUAL_VERSIONS: 12
+        #  CONAN_BUILD_TYPES: Debug
         - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
           CONAN_VISUAL_VERSIONS: 14
           CONAN_BUILD_TYPES: Release
