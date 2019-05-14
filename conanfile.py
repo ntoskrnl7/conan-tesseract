@@ -82,6 +82,21 @@ class TesseractConan(ConanFile):
         if not use_pkg_config:
             cmake.definitions['Leptonica_DIR'] = self.deps_cpp_info['leptonica'].rootpath
 
+        # disable a teseract executable file.
+        tools.replace_in_file(
+            os.path.join(self._source_subfolder, "CMakeListsOriginal.txt"),
+            'add_executable                  (tesseract ${tesseractmain_src} ${tesseractmain_rsc})',
+            '# add_executable                  (tesseract ${tesseractmain_src} ${tesseractmain_rsc})')
+        tools.replace_in_file(
+            os.path.join(self._source_subfolder, "CMakeListsOriginal.txt"),
+            'target_link_libraries           (tesseract libtesseract)',
+            '# target_link_libraries           (tesseract libtesseract)')
+
+        tools.replace_in_file(
+            os.path.join(self._source_subfolder, "CMakeListsOriginal.txt"),
+            'install(TARGETS tesseract RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)',
+            '# install(TARGETS tesseract RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)')
+
         with tools.environment_append({'PKG_CONFIG_PATH': self.build_folder}) if use_pkg_config else tools.no_op():
             cmake.configure(source_folder=self._source_subfolder)
             cmake.build()
@@ -117,6 +132,6 @@ class TesseractConan(ConanFile):
         self.cpp_info.libs = tools.collect_libs(self)
         if self.settings.os == "Linux":
             self.cpp_info.libs.extend(["pthread"])
-        if self.settings.compiler == "Visual Studio":
+        if self.settings.os == "Windows":
             if not self.options.shared:
                 self.cpp_info.libs.append('ws2_32')
